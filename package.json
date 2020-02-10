@@ -1,0 +1,39 @@
+{
+  "name": "openapi-fastify-codegen",
+  "main": "./lib/codegen.js",
+  "version": "1.0.0",
+  "description": "An OpenAPI v3  code generator for Node.js",
+  "bin": {
+    "snc": "./cli.js"
+  },
+  "bugs": {
+    "url": "https://github.com/ozonep/openapi-fastify-codegen/issues"
+  },
+  "engines": {
+    "node": ">=13.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ozonep/openapi-fastify-codegen.git"
+  },
+  "keywords": [
+    "openapi",
+    "fastify",
+    "node.js"
+  ],
+  "author": {
+    "name": "Ivan Malkov",
+    "email": "ivanvmalkov@gmail.com"
+  },
+  "homepage": "https://github.com/ozonep/openapi-fastify-codegen",
+  "dependencies": {
+    "commander": "^2.12.2",
+    "fs.extra": "1.3.2",
+    "handlebars": "^4.1.2",
+    "js-yaml": "^3.13.1",
+    "json-schema-ref-parser": "^4.0.4",
+    "lodash": "^4.17.11",
+    "project-name-generator": "^2.1.6",
+    "word-wrap": "1.1.0"
+  }
+}
