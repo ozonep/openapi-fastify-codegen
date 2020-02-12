@@ -1,7 +1,8 @@
 {
   "name": "openapi-fastify-codegen",
   "main": "./lib/codegen.js",
-  "version": "1.0.0",
+  "type": "module",
+  "version": "1.0.1",
   "description": "An OpenAPI v3  code generator for Node.js",
   "bin": {
     "snc": "./cli.js"

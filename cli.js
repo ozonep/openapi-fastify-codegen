@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
-const path = require('path');
-const program = require('commander');
+import path from 'path';
+import fs from 'fs';
+import program from 'commander';
+
+const require = (filepath, encoding = "utf8") => JSON.parse(fs.readFileSync(filepath, { encoding }));
 const packageInfo = require('./package.json');
-const codegen = require('./lib/codegen');
+
+import {codegen} from './lib/codegen.js';
 
 const red = text => `\x1b[31m${text}\x1b[0m`;
 const magenta = text => `\x1b[35m${text}\x1b[0m`;
@@ -20,9 +24,7 @@ program
   .action((swaggerFilePath) => {
     swaggerFile = path.resolve(swaggerFilePath);
   })
-  .option('-b, --handlebars <helperFilePath>', 'path to external handlebars helpers file (defaults to empty)', parseOutput)
   .option('-o, --output <outputDir>', 'directory where to put the generated files (defaults to current directory)', parseOutput, process.cwd())
-  .option('-t, --templates <templateDir>', 'directory where templates are located (defaults to internal nodejs templates)')
   .parse(process.argv);
 
 if (!swaggerFile) {
@@ -30,11 +32,9 @@ if (!swaggerFile) {
   program.help(); // This exits the process
 }
 
-codegen.generate({
+codegen({
   swagger: swaggerFile,
   target_dir: program.output,
-  templates: program.templates ? path.resolve(process.cwd(), program.templates) : undefined,
-  handlebars_helper: program.handlebars ? path.resolve(process.cwd(), program.handlebars) : undefined
 }).then(() => {
   console.log(green('Done! ✨'));
   console.log(yellow('Check out your shiny new API at ') + magenta(program.output) + yellow('.'));

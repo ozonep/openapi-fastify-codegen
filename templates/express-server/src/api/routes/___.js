@@ -7,37 +7,37 @@ const router = new express.Router();
   {{#each this.path}}
     {{#validMethod @key}}
 /**
- {{#each ../descriptionLines}}
+ {{#each this.descriptionLines}}
  * {{{this}}}
  {{/each}}
  */
-router.{{@key}}('{{../../subresource}}', async (req, res, next) => {
+router.{{@key}}('{{../subresource}}', async (req, res, next) => {
   const options = {
-  {{#if ../requestBody}}
-  body: req.body{{#compare (lookup ../parameters 'length') 0 operator = '>' }},{{/compare}}
+  {{#if this.requestBody}}
+  body: req.body{{#compare (lookup this.parameters 'length') 0 operator = '>' }},{{/compare}}
   {{/if}}
-    {{#each ../parameters}}
+    {{#each this.parameters}}
       {{#equal this.in "query"}}
-        {{{quote ../name}}}: req.query['{{../name}}']{{#unless @last}},{{/unless}}
+        {{{quote this.name}}}: req.query['{{this.name}}']{{#unless @last}},{{/unless}}
       {{/equal}}
       {{#equal this.in "path"}}
-        {{{quote ../name}}}: req.params['{{../name}}']{{#unless @last}},{{/unless}}
+        {{{quote this.name}}}: req.params['{{this.name}}']{{#unless @last}},{{/unless}}
       {{/equal}}
       {{#equal this.in "header"}}
-        {{{quote ../name}}}: req.header['{{../name}}']{{#unless @last}},{{/unless}}
+        {{{quote this.name}}}: req.header['{{this.name}}']{{#unless @last}},{{/unless}}
       {{/equal}}
     {{/each}}
     };
 
     try {
-      const result = await {{camelCase ../../../operation_name}}.{{../operationId}}(options);
-      {{#ifNoSuccessResponses ../responses}}
+      const result = await {{camelCase ../../operation_name}}.{{this.operationId}}(options);
+      {{#ifNoSuccessResponses this.responses}}
         res.header('X-Result', result.data).status(200).send();
       {{else}}
         res.status(result.status || 200).send(result.data);
       {{/ifNoSuccessResponses}}
       } catch (err) {
-      {{#ifNoErrorResponses ../responses}}
+      {{#ifNoErrorResponses this.responses}}
         return res.status(500).send({
           status: 500,
           error: 'Server Error'
@@ -55,42 +55,42 @@ router.{{@key}}('{{../../subresource}}', async (req, res, next) => {
   {{#each this.path}}
     {{#validMethod @key}}
 /**
- {{#each ../descriptionLines}}
+ {{#each this.descriptionLines}}
  * {{{this}}}
  {{/each}}
  */
-router.{{@key}}('{{../../subresource}}', async (req, res, next) => {
+router.{{@key}}('{{../subresource}}', async (req, res, next) => {
   const options = {
-    {{#if ../requestBody}}
-    body: req.body{{#compare (lookup ../parameters 'length') 0 operator = '>' }},{{/compare}}
+    {{#if this.requestBody}}
+    body: req.body{{#compare (lookup this.parameters 'length') 0 operator = '>' }},{{/compare}}
     {{/if}}
-    {{#each ../parameters}}
+    {{#each this.parameters}}
       {{#equal this.in "query"}}
-    {{{quote ../name}}}: req.query['{{../name}}']{{#unless @last}},{{/unless}}
+    {{{quote this.name}}}: req.query['{{this.name}}']{{#unless @last}},{{/unless}}
       {{/equal}}
       {{#equal this.in "path"}}
-    {{{quote ../name}}}: req.params['{{../name}}']{{#unless @last}},{{/unless}}
+    {{{quote this.name}}}: req.params['{{this.name}}']{{#unless @last}},{{/unless}}
       {{/equal}}
       {{#equal this.in "header"}}
-    {{{quote ../name}}}: req.header['{{../name}}']{{#unless @last}},{{/unless}}
+    {{{quote this.name}}}: req.header['{{this.name}}']{{#unless @last}},{{/unless}}
       {{/equal}}
       {{#match @../key "(post|put)"}}
         {{#equal ../in "body"}}
-    {{{quote ../name}}}: req.body['{{../name}}']{{#unless @last}},{{/unless}}
+    {{{quote this.name}}}: req.body['{{this.name}}']{{#unless @last}},{{/unless}}
         {{/equal}}
       {{/match}}
     {{/each}}
   };
 
   try {
-    const result = await {{camelCase ../../../operation_name}}.{{../operationId}}(options);
-    {{#ifNoSuccessResponses ../responses}}
+    const result = await {{camelCase ../../operation_name}}.{{this.operationId}}(options);
+    {{#ifNoSuccessResponses this.responses}}
     res.status(200).send(result.data);
     {{else}}
     res.status(result.status || 200).send(result.data);
     {{/ifNoSuccessResponses}}
   } catch (err) {
-    {{#ifNoErrorResponses ../responses}}
+    {{#ifNoErrorResponses this.responses}}
     return res.status(500).send({
       status: 500,
       error: 'Server Error'

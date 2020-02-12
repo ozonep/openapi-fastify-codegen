@@ -4,15 +4,15 @@ const ServerError = require('../../lib/error');
     {{#validMethod @key}}
 /**
  * @param {Object} options
-{{#each ../parameters}}
+{{#each this.parameters}}
 {{#if this.name}}
- * @param {{../../../../openbrace}}{{capitalize type}}{{../../../../closebrace}} options.{{name}} {{inline description}}
+ * @param {{../../../openbrace}}{{capitalize type}}{{../../../closebrace}} options.{{name}} {{inline description}}
 {{/if}}
 {{/each}}
  * @throws {Error}
  * @return {Promise}
  */
-module.exports.{{../operationId}} = async (options) => {
+module.exports.{{this.operationId}} = async (options) => {
   // Implement your business logic here...
   //
   // This function should return as follows:
@@ -32,7 +32,7 @@ module.exports.{{../operationId}} = async (options) => {
 
   return {
     status: 200,
-    data: '{{../operationId}} ok!'
+    data: '{{this.operationId}} ok!'
   };
 };
 
