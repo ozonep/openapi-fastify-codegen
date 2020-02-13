@@ -1,10 +1,15 @@
-openapi: 3.0.1
+openapi: 3.0.2
 info:
   title: Answers Collector
   description: This is an Answers Collector Server. It can receive and provide answers that students create during bootcamps/workshops.
   version: v1
+  contact:
+    name: Ivan
+  license:
+    name: MIT
 servers:
-  - url: http://35.228.56.251:8000/
+  - url: 'http://35.228.56.251:8000'
+    description: Fake for now
 tags:
   - name: answer
     description: For adding answers
@@ -16,7 +21,7 @@ paths:
       tags:
         - answer
       summary: Add a new answer to the collection
-      operationId: addPet
+      operationId: addAnswer
       requestBody:
         description: Answer object that needs to be added to the DB
         content:
@@ -25,7 +30,7 @@ paths:
               $ref: '#/components/schemas/Answer'
         required: true
       responses:
-        200:
+        '200':
           description: Success response
           content:
             application/json:
@@ -35,8 +40,8 @@ paths:
                   id:
                     type: string
                     example: xdvwwJduoAfaXnhUXKDx
-        400:
-          description: Invalid input, or some fields are missing
+        '400':
+          description: 'Invalid input, or some fields are missing'
           content:
             application/json:
               schema:
@@ -45,7 +50,7 @@ paths:
                   error:
                     type: string
                     example: exerciseId is required
-        405:
+        '405':
           description: Unsupported method
           content:
             application/json:
@@ -56,19 +61,17 @@ paths:
                     type: string
                     example: Bad request. Only POST method is supported
       x-codegen-request-body-name: body
+      description: Add answer to DB
   /answers:
     get:
       tags:
         - answers
-      summary: get all answers, or specific answer from the DB
-      description: If fetching for 1 answer by id - will return object. In all other
-        scenarios will return array of object(s). 'userId' & 'exerciseId' queries
-        can be combined to get all answers for specific exercise submitted by specific
-        user.
+      summary: 'get all answers, or specific answer from the DB'
+      description: "If fetching for 1 answer by id - will return object. In all other scenarios will return array of object(s). 'userId' & 'exerciseId' queries can be combined to get all answers for specific exercise submitted by specific user."
       parameters:
         - name: id
           in: query
-          description: 'Get answer by it''s id. Example: /answers?id=fgdfg345dfdfs'
+          description: "Get answer by it's id. Example: /answers?id=fgdfg345dfdfs"
           schema:
             type: string
         - name: userId
@@ -82,7 +85,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: Success
           content:
             application/json:
@@ -90,7 +93,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DBAnswer'
-        404:
+        '404':
           description: Document not found
           content:
             application/json:
@@ -100,7 +103,7 @@ paths:
                   error:
                     type: string
                     example: Unable to find the document
-        405:
+        '405':
           description: Unsupported method
           content:
             application/json:
@@ -110,7 +113,7 @@ paths:
                   error:
                     type: string
                     example: Bad request. Only GET/PATCH are supported
-        500:
+        '500':
           description: Server error
           content:
             application/json:
@@ -124,6 +127,27 @@ paths:
                     type: object
                     properties: {}
                     example: {}
+      operationId: receiveAnswers
+  '/answers/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: 'get-answers-id'
+      description: "Catch specific answer from id bro"
 components:
   schemas:
     Answer:

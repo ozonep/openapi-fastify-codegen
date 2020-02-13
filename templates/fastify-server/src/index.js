@@ -1,19 +1,26 @@
 import Fastify from 'fastify';
 import fastifyFormbody from 'fastify-formbody';
 import fastifyMultipart from 'fastify-multipart';
-import fastifyLoader from 'fastify-loader';
 import fastifyCors from 'fastify-cors';
 
 const fastify = Fastify();
 
 
-fastify.register(fastifyLoader, {
-    paths: ['./routes/*.js']
-});
-//fastify.register(require('./routes/user'))
 fastify.register(fastifyFormbody);
 fastify.register(fastifyMultipart);
 fastify.register(fastifyCors, {});
+
+{{#each @root.swagger.endpoints}}
+    {{#endsWith @root.swagger.basePath '/'}}
+fastify.register('{{@root.swagger.basePath}}{{this}}', import('./routes/{{this}}'), {
+    prefix: '/{{this}}'
+});
+    {{else}}
+fastify.register('{{@root.swagger.basePath}}/{{this}}', import('./routes/{{this}}'), {
+    prefix: '/{{this}}'
+});
+    {{/endsWith}}
+{{/each}}
 
 const port = process.env.PORT || 3000;
 
