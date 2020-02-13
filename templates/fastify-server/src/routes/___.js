@@ -9,7 +9,7 @@ export default async function (fastify, opts) {
    * {{{this}}}
    {{/each}}
    */
-  fastify.{{@key}}('{{../subresource}}', async (req, res, next) => {
+  fastify.{{@key}}('{{../subresource}}', async (req, reply) => {
     const options = {
     {{#if this.requestBody}}
     body: req.body{{#compare (lookup this.parameters 'length') 0 operator = '>' }},{{/compare}}
@@ -30,13 +30,13 @@ export default async function (fastify, opts) {
                       try {
                         const result = await {{camelCase ../../operation_name}}.{{this.operationId}}(options);
                         {{#ifNoSuccessResponses this.responses}}
-                        res.header('X-Result', result.data).status(200).send();
+                        reply.header('X-Result', result.data).code(200).send();
                         {{else}}
-                        res.status(result.status || 200).send(result.data);
+                        reply.code(result.status || 200).send(result.data);
                         {{/ifNoSuccessResponses}}
                         } catch (err) {
                           {{#ifNoErrorResponses this.responses}}
-                          return res.status(500).send({
+                          return reply.code(500).send({
                             status: 500,
                             error: 'Server Error'
                           });
@@ -57,7 +57,7 @@ export default async function (fastify, opts) {
          * {{{this}}}
          {{/each}}
          */
-        fastify.{{@key}}('{{../subresource}}', async (req, res, next) => {
+        fastify.{{@key}}('{{../subresource}}', async (req, res) => {
           const options = {
           {{#if this.requestBody}}
           body: req.body{{#compare (lookup this.parameters 'length') 0 operator = '>' }},{{/compare}}
@@ -83,13 +83,13 @@ export default async function (fastify, opts) {
                                       try {
                                         const result = await {{camelCase ../../operation_name}}.{{this.operationId}}(options);
                                         {{#ifNoSuccessResponses this.responses}}
-                                        res.status(200).send(result.data);
+                                        reply.code(200).send(result.data);
                                         {{else}}
-                                        res.status(result.status || 200).send(result.data);
+                                        reply.code(result.status || 200).send(result.data);
                                         {{/ifNoSuccessResponses}}
                                         } catch (err) {
                                           {{#ifNoErrorResponses this.responses}}
-                                          return res.status(500).send({
+                                          return reply.code(500).send({
                                             status: 500,
                                             error: 'Server Error'
                                           });
