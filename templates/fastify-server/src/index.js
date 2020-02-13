@@ -12,11 +12,11 @@ fastify.register(fastifyCors, {});
 
 {{#each @root.swagger.endpoints}}
     {{#endsWith @root.swagger.basePath '/'}}
-fastify.register(import('./routes/{{this}}'), {
+fastify.register(import('./routes/{{this}}.js'), {
     prefix: '/{{this}}'
 });
     {{else}}
-fastify.register(import('./routes/{{this}}'), {
+fastify.register(import('./routes/{{this}}.js'), {
     prefix: '/{{this}}'
 });
     {{/endsWith}}
@@ -26,8 +26,8 @@ const port = process.env.PORT || 3000;
 
 fastify.listen(port, '0.0.0.0', (err, address) => {
     if (err) {
-        fastify.log.error(err);
+        console.error(err);
         process.exit(1)
     }
-    fastify.log.info(`server listening on ${address}`)
+    console.log(`server listening on ${address}`)
 });

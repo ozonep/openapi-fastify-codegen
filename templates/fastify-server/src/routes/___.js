@@ -1,4 +1,4 @@
-import {{camelCase operation_name}} from '../services/{{operation_name}}';
+import * as {{camelCase operation_name}} from '../services/{{operation_name}}.js';
 
 export default async function (fastify, opts) {
   {{#each headOperation}}
@@ -41,7 +41,7 @@ export default async function (fastify, opts) {
                             error: 'Server Error'
                           });
                           {{else}}
-                          next(err);
+                          reply.send(err);
                           {{/ifNoErrorResponses}}
                           }
                           });
@@ -57,7 +57,7 @@ export default async function (fastify, opts) {
          * {{{this}}}
          {{/each}}
          */
-        fastify.{{@key}}('{{../subresource}}', async (req, res) => {
+        fastify.{{@key}}('{{../subresource}}', async (req, reply) => {
           const options = {
           {{#if this.requestBody}}
           body: req.body{{#compare (lookup this.parameters 'length') 0 operator = '>' }},{{/compare}}
@@ -94,7 +94,7 @@ export default async function (fastify, opts) {
                                             error: 'Server Error'
                                           });
                                           {{else}}
-                                          next(err);
+                                          reply.send(err);
                                           {{/ifNoErrorResponses}}
                                           }
                                           });
