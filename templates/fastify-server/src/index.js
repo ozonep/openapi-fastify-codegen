@@ -12,11 +12,11 @@ fastify.register(fastifyCors, {});
 
 {{#each @root.swagger.endpoints}}
     {{#endsWith @root.swagger.basePath '/'}}
-fastify.register('{{@root.swagger.basePath}}{{this}}', import('./routes/{{this}}'), {
+fastify.register(import('./routes/{{this}}'), {
     prefix: '/{{this}}'
 });
     {{else}}
-fastify.register('{{@root.swagger.basePath}}/{{this}}', import('./routes/{{this}}'), {
+fastify.register(import('./routes/{{this}}'), {
     prefix: '/{{this}}'
 });
     {{/endsWith}}
