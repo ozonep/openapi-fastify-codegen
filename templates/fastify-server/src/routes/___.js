@@ -11,9 +11,6 @@ export default async function (fastify, opts) {
    */
   fastify.{{@key}}('{{../subresource}}', async (req, reply) => {
     const options = {
-    {{#if this.requestBody}}
-    body: req.body{{#compare (lookup this.parameters 'length') 0 operator = '>' }},{{/compare}}
-      {{/if}}
         {{#each this.parameters}}
         {{#equal this.in "query"}}
         {{{quote this.name}}}: req.query['{{this.name}}']{{#unless @last}},{{/unless}}
@@ -57,7 +54,7 @@ export default async function (fastify, opts) {
          * {{{this}}}
          {{/each}}
          */
-        let schema = {
+        let schema{{createName @key ../subresource}} = {
       {{#reqIsJson this}}
       body: {
           {{#each this.[requestBody].[content].[application/json].[schema]}}
