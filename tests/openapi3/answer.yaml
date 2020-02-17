@@ -129,15 +129,15 @@ paths:
                     example: {}
       operationId: receiveAnswers
   '/answers/{id}':
-    parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
     get:
       summary: Your GET endpoint
       tags: []
+      parameters:
+        - schema:
+            type: string
+          name: id
+          in: path
+          required: true
       responses:
         '200':
           description: OK
