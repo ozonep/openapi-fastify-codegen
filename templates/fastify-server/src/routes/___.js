@@ -100,7 +100,7 @@ export default async function (fastify, opts) {
            {{/testForObjValue}}
     };
 
-          fastify.{{@key}}('{{../subresource}}', schema, async (req, reply) => {
+          fastify.{{@key}}('{{../subresource}}', schema{{createName @key ../subresource}}, async (req, reply) => {
           const options = {
           {{#if this.requestBody}}
           body: req.body{{#compare (lookup this.parameters 'length') 0 operator = '>' }},{{/compare}}
