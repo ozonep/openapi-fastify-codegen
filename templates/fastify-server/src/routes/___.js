@@ -36,7 +36,7 @@ export default async function (fastify, opts) {
                         {{/ifNoSuccessResponses}}
                         } catch (err) {
                           {{#ifNoErrorResponses this.responses}}
-                          return reply.code(500).send({
+                                    return reply.code(500).send({
                             status: 500,
                             error: 'Server Error'
                           });
@@ -57,7 +57,53 @@ export default async function (fastify, opts) {
          * {{{this}}}
          {{/each}}
          */
-        fastify.{{@key}}('{{../subresource}}', async (req, reply) => {
+        let schema = {
+      {{#reqIsJson this}}
+      body: {
+          {{#each this.[requestBody].[content].[application/json].[schema]}}
+          {{@key}}: {{#ifArray this}}
+                [{{#each this}}{{{json this}}}{{#unless @last}},{{/unless}}{{/each}}],
+                {{else}}
+                    {{#ifObject this}}
+          { {{#each this}}
+           {{@key}}: {
+              {{#each this}}
+              {{@key}}: {{{json this}}}{{#unless @last}},{{/unless}}
+                  {{/each}}
+                  }{{#unless @last}},{{/unless}}
+                      {{/each}} }
+                    {{else}}
+                          {{{json this}}}{{#unless @last}},{{/unless}}
+             {{/ifObject}}
+             {{/ifArray}}
+          {{/each}}
+      },
+      {{/reqIsJson}}
+      {{#testForObjValue this.parameters "query"}}
+          querystring: {
+              {{#each this.parameters}}
+              {{#equal this.in "query"}}
+              {{{quote this.name}}}: {type :'{{this.schema.type}}'}{{#unless @last}},{{/unless}}
+                  {{/equal}}
+                      {{/each}}
+                      },
+      {{/testForObjValue}}
+          {{#testForObjValue this.parameters "path"}}
+          params: {
+                type: 'object',
+                properties: {
+                  {{#each this.parameters}}
+                  {{#equal this.in "path"}}
+                  {{{quote this.name}}}: {type :'{{this.schema.type}}'}{{#unless @last}},{{/unless}}
+                      {{/equal}}
+                          {{/each}}
+              }
+
+                      },
+           {{/testForObjValue}}
+    };
+
+          fastify.{{@key}}('{{../subresource}}', schema, async (req, reply) => {
           const options = {
           {{#if this.requestBody}}
           body: req.body{{#compare (lookup this.parameters 'length') 0 operator = '>' }},{{/compare}}
