@@ -1,0 +1,426 @@
+openapi: 3.0.2
+info:
+  title: Expression Service
+  description: |-
+    To express anything in a richer format than plaintext, you create an expression. An expression is a captured moment of menaingful communication - stored in a speficic medium and/or form. The medium may be anything from very basic forms such as text and code, all the way to more advanced forms such as 360 videos and interactive visualizations.
+    Below you can see the the different expression types.
+    <img src="/spec-assets/expression-types.svg" />
+    Expressions makes it possible to make any field in other data structures  both richer and more consistent. As an example, a higher level feedback  service for providing feedback on exercises could use the expression  service to enable video feedback, etc.
+    Dealing with something so fundamental as expressions, it's crucial to have  it running very fast. Especially the read operations need to be extremely  performant. The expression service endpoint structure has universal  retrieval, but independent creation.
+  contact:
+    name: Developer @Sci-Code
+    url: https://sci-code.com
+    email: developer@sci-code.com
+  version: 0.0.2
+  license:
+    name: MIT
+servers:
+  - url: https://europe-west1-firestoreanswer.cloudfunctions.net/v1
+    description: Fake for now
+tags:
+  - name: Expression
+    description: The ```Expression``` object is a representation of a captured moment of menaingful communication - stored in a speficic medium and/or form.
+paths:
+  /expressions:
+    get:
+      tags:
+        - Expression
+      summary: Retrieve array of expressions
+      description: "Retrieves all expressions or filtered list of expressions in form of array. \nIf no query params will return ALL expressions from our DB."
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+          description: type of expression to filter for
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: "#/components/schemas/text_expression"
+                    - $ref: "#/components/schemas/math_expression"
+                    - $ref: "#/components/schemas/code_expression"
+                    - $ref: "#/components/schemas/image_expression"
+                    - $ref: "#/components/schemas/audio_expression"
+                    - $ref: "#/components/schemas/video_expression"
+                    - $ref: "#/components/schemas/animation_expression"
+        "404":
+          description: Expression not Found
+          content:
+            application/json:
+              schema:
+                type: string
+      operationId: getExpressions
+    parameters: []
+    post:
+      summary: Create an expression
+      operationId: postExpression
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/text_expression"
+                  - $ref: "#/components/schemas/math_expression"
+                  - $ref: "#/components/schemas/code_expression"
+                  - $ref: "#/components/schemas/image_expression"
+                  - $ref: "#/components/schemas/audio_expression"
+                  - $ref: "#/components/schemas/animation_expression"
+                  - $ref: "#/components/schemas/video_expression"
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+      description: Create any expression (audio/video/text)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/create_text_expression"
+                - $ref: "#/components/schemas/create_math_expression"
+                - $ref: "#/components/schemas/create_code_expression"
+                - $ref: "#/components/schemas/create_image_expression"
+                - $ref: "#/components/schemas/create_audio_expression"
+                - $ref: "#/components/schemas/create_animation_expression"
+                - $ref: "#/components/schemas/create_video_expression"
+        description: In the body, provide full expression with all required fields
+      tags:
+        - Expression
+  /expressions/{expressionId}:
+    parameters:
+      - schema:
+          type: string
+        name: expressionId
+        in: path
+        required: true
+    get:
+      summary: Retrieve single expression
+      tags:
+        - Expression
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/text_expression"
+                  - $ref: "#/components/schemas/math_expression"
+                  - $ref: "#/components/schemas/code_expression"
+                  - $ref: "#/components/schemas/image_expression"
+                  - $ref: "#/components/schemas/audio_expression"
+                  - $ref: "#/components/schemas/animation_expression"
+                  - $ref: "#/components/schemas/video_expression"
+      operationId: getExpression
+      description: Get single expression object by its ID
+components:
+  schemas:
+    expression:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier for the expression object.
+          format: uuid
+        type:
+          type: string
+          enum:
+            - animation
+            - audio
+            - code
+            - image
+            - math
+            - text
+            - video
+      required:
+        - id
+        - type
+    text_expression:
+      allOf:
+        - $ref: "#/components/schemas/expression"
+        - type: object
+          properties:
+            content:
+              description: The rich text content.
+              type: string
+            format:
+              description: The format of the rich text.
+              type: string
+              enum:
+                - Markdown
+          required:
+            - content
+            - format
+      example:
+        id: exp_ZZrEOIjc2kK3159uVMqxdw
+        format: Markdown
+        content: Hey ho, this is some text in *markdown* format.
+    create_text_expression:
+      properties:
+        content:
+          description: The rich text content.
+          type: string
+        format:
+          description: The format of the rich text.
+          type: string
+          enum:
+            - Markdown
+      required:
+        - content
+        - format
+      example:
+        content: Hey ho, this is some text in *markdown* format.
+        format: Markdown
+    math_expression:
+      allOf:
+        - $ref: "#/components/schemas/expression"
+        - type: object
+          properties:
+            content:
+              description: The mathematics content.
+              type: string
+            format:
+              description: The format of the rich text.
+              type: string
+              enum:
+                - KaTeX
+                - TeX
+          required:
+            - content
+            - format
+      example:
+        id: exp_ZZrEOIjc2kK3159uVMqxdw
+        content: \f{a} = \int_{-\infty}^\infty \hat \f\xi\,e^{2 \pi i \xi x} \,d\xi
+        format: KaTeX
+    create_math_expression:
+      properties:
+        content:
+          description: The mathematics content.
+          type: string
+        format:
+          description: The format of the rich text.
+          type: string
+          enum:
+            - KaTeX
+            - TeX
+      required:
+        - content
+        - format
+      example:
+        content: \f{a} = \int_{-\infty}^\infty \hat \f\xi\,e^{2 \pi i \xi x} \,d\xi
+        format: KaTeX
+    code_expression:
+      allOf:
+        - $ref: "#/components/schemas/expression"
+        - type: object
+          properties:
+            content:
+              description: The code content.
+              type: string
+            programmingLanguage:
+              description: The programming language of the code.
+              type: string
+              enum:
+                - javascript
+                - python
+          required:
+            - content
+            - format
+      example:
+        id: exp_ZZrEOIjc2kK3159uVMqxdw
+        content: |
+          function f(x,y) {
+            return x+y;
+          }
+        programmingLanguage: javascript
+    create_code_expression:
+      properties:
+        content:
+          description: The code content.
+          type: string
+        programmingLanguage:
+          description: The programming language of the code.
+          type: string
+          enum:
+            - javascript
+            - python
+      required:
+        - content
+        - format
+      example:
+        content: |
+          function f(x,y) {
+            return x+y;
+          }
+        programmingLanguage: javascript
+    image_expression:
+      allOf:
+        - $ref: "#/components/schemas/expression"
+        - type: object
+          properties:
+            src:
+              description: A link to where the file is stored.
+              type: string
+            fileFormat:
+              description: The format of the file.
+              type: string
+              enum:
+                - png
+                - jpg
+                - jpeg
+          required:
+            - src
+            - fileFormat
+      example:
+        id: exp_ZZrEOIjc2kK3159uVMqxdw
+        src: https://location-to-file-storage.com/maybe-some-structure/blob-identifier.jpg
+        fileFormat: jpg
+    create_image_expression:
+      properties:
+        fileName:
+          description: The actual image file you want to upload.
+          type: string
+          format: binary
+        fileFormat:
+          description: The format of the file.
+          type: string
+          enum:
+            - png
+            - jpg
+            - jpeg
+      required:
+        - fileName
+        - fileFormat
+      example:
+        fileName: example.png
+        fileFormat: png
+    audio_expression:
+      allOf:
+        - $ref: "#/components/schemas/expression"
+        - type: object
+          properties:
+            src:
+              description: A link to where the file is stored.
+              type: string
+            fileFormat:
+              description: The format of the file.
+              type: string
+              enum:
+                - mp3
+                - ogg
+          required:
+            - src
+            - fileFormat
+      example:
+        id: exp_ZZrEOIjc2kK3159uVMqxdw
+        src: https://location-to-file-storage.com/maybe-some-structure/blob-identifier.mp3
+        fileFormat: mp3
+    create_audio_expression:
+      properties:
+        fileName:
+          description: The actual audio file you want to upload.
+          type: string
+          format: binary
+        fileFormat:
+          description: The format of the file.
+          type: string
+          enum:
+            - mp3
+            - ogg
+      required:
+        - fileName
+        - fileFormat
+      example:
+        fileName: example.mp3
+        fileFormat: mp3
+    animation_expression:
+      allOf:
+        - $ref: "#/components/schemas/expression"
+        - type: object
+          properties:
+            src:
+              description: A link to where the file is stored.
+              type: string
+            fileFormat:
+              description: The format of the file.
+              type: string
+              enum:
+                - gif
+                - mp4
+          required:
+            - src
+            - fileFormat
+      example:
+        id: exp_ZZrEOIjc2kK3159uVMqxdw
+        src: https://location-to-file-storage.com/maybe-some-structure/blob-identifier.mp4
+        fileFormat: mp4
+    create_animation_expression:
+      properties:
+        fileName:
+          description: The actual animation file you want to upload.
+          type: string
+          format: binary
+        fileFormat:
+          description: The format of the file.
+          type: string
+          enum:
+            - gif
+            - mp4
+      required:
+        - fileName
+        - fileFormat
+      example:
+        fileName: example.mp4
+        fileFormat: mp4
+    video_expression:
+      allOf:
+        - $ref: "#/components/schemas/expression"
+        - type: object
+          properties:
+            src:
+              description: A link to where the file is stored.
+              type: string
+            fileFormat:
+              description: The format of the file.
+              type: string
+              enum:
+                - mp4
+          required:
+            - src
+            - fileFormat
+      example:
+        id: exp_ZZrEOIjc2kK3159uVMqxdw
+        src: https://location-to-file-storage.com/maybe-some-structure/blob-identifier.mp4
+        fileFormat: mp4
+    create_video_expression:
+      properties:
+        fileName:
+          description: The actual video file you want to upload.
+          type: string
+          format: binary
+        fileFormat:
+          description: The format of the file.
+          type: string
+          enum:
+            - mp4
+      required:
+        - fileName
+        - fileFormat
+      example:
+        fileName: example.mp4
+        fileFormat: mp4
+  securitySchemes: {}

@@ -1,0 +1,643 @@
+openapi: 3.0.2
+info:
+  title: Challenge Service
+  version: 0.1.0
+  description: |
+    A Challenge consists of multiple exercises, that together lead
+    the user towards some meaningful goal. The goal may be to establish 
+    a baseline of skills (assessment), or simply building something 
+    interesting.
+
+    # Introduction
+    The Challenge service supplies data to our challenge catalog which
+    can be found on our landing page.
+
+    # Authentication
+    This API supports OAuth2, and more specifically, the implicit flow.
+
+
+    <!-- ReDoc-Inject: <security-definitions> -->
+  contact:
+    name: Developer @Sci-Code
+    url: 'https://sci-code.com'
+    email: developer@sci-code.com
+  license:
+    name: Copyright © Sci-Code Inc. All Rights Reserved
+    url: 'https://sci-code.com'
+tags:
+  - name: Challenges
+    description: |-
+      The ```Challenge``` object holds the information that
+      describes a particular challenge.
+paths:
+  /challenges:
+    post:
+      operationId: createChallenge
+      summary: Create Challenge object
+      description: Creates a new Challenge object.
+      security:
+        - OAuth2:
+            - 'write:challenges'
+      tags:
+        - Challenges
+      responses:
+        '201':
+          description: Created
+          content:
+            multipart/form-data:
+              schema:
+                $ref: '#/components/schemas/RetrieveChallenge'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChallenge'
+    get:
+      operationId: getChallenges
+      summary: List all challenges
+      description: Returns a list of your challenges.
+      tags:
+        - Challenges
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RetrieveChallenge'
+      parameters: []
+  '/challenges/{id}':
+    get:
+      operationId: getChallenge
+      tags:
+        - Challenges
+      summary: Retrieve a Challenge
+      description: 'Retrieves the details of an existing challenge. Simply supply a unique challenge ID, and you''ll get the corresponding challenge information in return.'
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrieveChallenge'
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    patch:
+      operationId: updateChallenge
+      summary: Update a Challenge
+      description: 'Updates specific details of an existing challenge. Simply supply a unique challenge ID, and a set of updates in the form of a [JSON Patch](http://jsonpatch.com/) document in the request body.'
+      security:
+        - OAuth2:
+            - 'write:challenges'
+      tags:
+        - Challenges
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: diggit.eu.auth0.com
+          scopes:
+            'write:challenges': create or update challenges
+  schemas:
+    RetrieveChallenge:
+      allOf:
+        - $ref: '#/components/schemas/Challenge'
+    CreateChallenge:
+      title: CreateChallenge
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/RetrieveChallenge'
+    PatchDocument:
+      description: A JSONPatch document as defined by RFC 6902
+      required:
+        - op
+        - path
+      properties:
+        op:
+          type: string
+          description: The operation to be performed
+          enum:
+            - add
+            - remove
+            - replace
+            - move
+            - copy
+            - test
+        path:
+          type: string
+          description: A JSON-Pointer
+        value:
+          type: object
+          description: The value to be used within the operations.
+        from:
+          type: string
+          description: A string containing a JSON Pointer value.
+    id:
+      description: Unique identifier for the object.
+      type: string
+      example: _ZZrEOIjc2kK3159uVMqxdw
+    object:
+      description: String representing the object’s type. Objects of the same type share the same value.
+      type: string
+    timestamp:
+      description: Date and Time at which the object was created. Measured in seconds since the Unix epoch.
+      type: integer
+      format: unix-time
+      example: 1581554917050
+    url:
+      description: 'A universal resource identifier (URI), according to the [RFC3986](https://tools.ietf.org/html/rfc3986) standard.'
+      type: string
+      format: uri
+      example: 'https://example.com/some/path'
+    language:
+      description: 'A three-letter ISO code ([ISO 639-3](https://en.wikipedia.org/wiki/ISO_639-3)), representing the language.'
+      type: string
+      minLength: 3
+      maxLength: 3
+      example: eng
+    ExpressionTypes:
+      title: type
+      description: Different kinds of expressions.
+      enum:
+        - text
+        - math
+        - code
+        - image
+        - audio
+        - animation
+        - video
+      type: string
+    Expression:
+      title: Expression
+      description: An expression is a captured moment of menaingful communication - in a speficic medium and/or form.
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        created:
+          $ref: '#/components/schemas/timestamp'
+        type:
+          $ref: '#/components/schemas/ExpressionTypes'
+      required:
+        - created
+        - id
+        - type
+    TextExpression:
+      title: Text Expression
+      description: Expressions captured in rich text.
+      allOf:
+        - $ref: '#/components/schemas/Expression'
+        - type: object
+          properties:
+            content:
+              title: content
+              description: The content in ready-to-go cleartext format.
+              type: string
+              example: 'Hey ho, this is some text in *markdown* format.'
+            language:
+              $ref: '#/components/schemas/language'
+            format:
+              title: format
+              description: The text format.
+              enum:
+                - markdown
+                - plain text
+              type: string
+              default: markdown
+              example: markdown
+            type:
+              allOf:
+                - $ref: '#/components/schemas/ExpressionTypes'
+                - example: text
+          required:
+            - content
+            - format
+            - language
+    MathExpression:
+      title: Math Expression
+      description: Expressions captured in mathematical notation.
+      allOf:
+        - $ref: '#/components/schemas/Expression'
+        - type: object
+          properties:
+            content:
+              title: content
+              description: The mathematics content.
+              type: string
+              example: '\\f{a} = \\int_{-\\infty}^\\infty \\hat \\f\\xi\\,e^{2 \\pi i \\xi x} \\,d\\xi'
+            format:
+              title: format
+              description: The mathematical notation format.
+              enum:
+                - katex
+                - tex
+              type: string
+              example: katex
+            type:
+              allOf:
+                - $ref: '#/components/schemas/ExpressionTypes'
+                - example: math
+          required:
+            - content
+            - format
+    ProgrammingLanguage:
+      title: ProgrammingLanguage
+      description: A structure of the programming langague
+      type: object
+      properties:
+        name:
+          title: name
+          description: The name of the programming language.
+          type: string
+        logoUrl:
+          title: logoUrl
+          description: A url to the logo of the language.
+          type: string
+      required:
+        - logoUrl
+        - name
+    CodeExpression:
+      title: Code Expression
+      description: Expressions captured in various coding languages.
+      allOf:
+        - $ref: '#/components/schemas/Expression'
+        - type: object
+          properties:
+            content:
+              title: content
+              description: The code content.
+              type: string
+              example: 'function f(x,y) {\n  return x+y;\n}\n'
+            programmingLanguage:
+              $ref: '#/components/schemas/ProgrammingLanguage'
+            type:
+              allOf:
+                - $ref: '#/components/schemas/ExpressionTypes'
+                - example: code
+          required:
+            - programmingLanguage
+            - content
+    ImageExpression:
+      title: Image Expression
+      description: Expressions captured in image form.
+      allOf:
+        - $ref: '#/components/schemas/Expression'
+        - type: object
+          properties:
+            src:
+              $ref: '#/components/schemas/url'
+            fileFormat:
+              title: fileFormat
+              description: The specific information encoding method used.
+              enum:
+                - jpg
+                - png
+              type: string
+            type:
+              allOf:
+                - $ref: '#/components/schemas/ExpressionTypes'
+                - example: image
+          required:
+            - fileFormat
+            - src
+    AudioExpression:
+      title: Audio Expression
+      description: Expressions captured in the form of sound.
+      allOf:
+        - $ref: '#/components/schemas/Expression'
+        - type: object
+          properties:
+            src:
+              $ref: '#/components/schemas/url'
+            fileFormat:
+              title: fileFormat
+              description: The specific information encoding method used.
+              enum:
+                - mp3
+                - ogg
+              type: string
+            type:
+              allOf:
+                - $ref: '#/components/schemas/ExpressionTypes'
+                - example: audio
+          required:
+            - fileFormat
+            - src
+    AnimationExpression:
+      title: Animation Expression
+      description: Expressions captured in image sequence form; without sound.
+      allOf:
+        - $ref: '#/components/schemas/Expression'
+        - type: object
+          properties:
+            src:
+              $ref: '#/components/schemas/url'
+            fileFormat:
+              title: fileFormat
+              description: The specific information encoding method used.
+              enum:
+                - gif
+                - mp4
+              type: string
+            type:
+              allOf:
+                - $ref: '#/components/schemas/ExpressionTypes'
+                - example: animation
+          required:
+            - fileFormat
+            - src
+    VideoExpression:
+      title: Video Expression
+      description: Expressions captured in video form.
+      allOf:
+        - $ref: '#/components/schemas/Expression'
+        - type: object
+          properties:
+            src:
+              $ref: '#/components/schemas/url'
+            fileFormat:
+              title: fileFormat
+              description: The specific information encoding method used.
+              type: string
+              enum:
+                - mp4
+            type:
+              allOf:
+                - $ref: '#/components/schemas/ExpressionTypes'
+                - example: video
+          required:
+            - fileFormat
+            - src
+    ExerciseTypes:
+      title: type
+      description: Different kinds of exercises.
+      type: string
+      enum:
+        - free_form
+        - multiple_choice
+        - fill_in_the_blank
+        - command_line
+        - code_snippet
+        - codebase
+        - database
+        - code_review
+    Exercise:
+      title: Exercise
+      description: 'An exercise introduces you to, and invites you to complete, a specific activity.'
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        created:
+          $ref: '#/components/schemas/timestamp'
+        promoImage:
+          allOf:
+            - $ref: '#/components/schemas/url'
+            - description: An image used to promote the exercise.
+        description:
+          title: description
+          description: A set of expressions combined to form a rich description of the activity requested.
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/TextExpression'
+              - $ref: '#/components/schemas/MathExpression'
+              - $ref: '#/components/schemas/CodeExpression'
+              - $ref: '#/components/schemas/ImageExpression'
+              - $ref: '#/components/schemas/AudioExpression'
+              - $ref: '#/components/schemas/AnimationExpression'
+              - $ref: '#/components/schemas/VideoExpression'
+        type:
+          $ref: '#/components/schemas/ExerciseTypes'
+      required:
+        - id
+        - created
+        - description
+        - type
+    OrganizationType:
+      title: type
+      description: The type of organization.
+      type: string
+      enum:
+        - company
+        - ngo
+        - igo
+        - non-profit
+        - government_department
+        - government_agency
+    File:
+      title: File
+      type: object
+      description: An object with information about a file.
+      properties:
+        id:
+          $ref: '#/components/schemas/timestamp'
+        created:
+          $ref: '#/components/schemas/timestamp'
+        title:
+          description: A user friendly title for the file.
+          maxLength: 280
+          nullable: true
+          type: string
+        filename:
+          description: 'A filename for the file, suitable for saving to a filesystem.'
+          nullable: true
+          type: string
+        type:
+          description: String representing the object's type. Objects of the same type share the same value.
+          enum:
+            - file
+          type: string
+          example: file
+        size:
+          description: The size in bytes of the file object.
+          type: integer
+        fileFormat:
+          title: fileFormat
+          description: The specific information encoding method used.
+          enum:
+            - jpg
+            - png
+          nullable: true
+          type: string
+        url:
+          description: The URL from which the file can be downloaded using your live secret API key.
+          type: string
+      required:
+        - id
+        - created
+        - type
+        - url
+        - size
+    OrganizationBranding:
+      title: Organization Branding
+      description: The branding associated with the organization.
+      properties:
+        icon:
+          description: An icon for the account. Must be square and at least 128px x 128px.
+          allOf:
+            - $ref: '#/components/schemas/File'
+            - nullable: true
+        logo:
+          description: A logo for the account that will be used in on pages. Must be at least 128px x 128px.
+          allOf:
+            - $ref: '#/components/schemas/File'
+            - nullable: true
+        primary_color:
+          description: A CSS hex color value representing the primary branding color for this account.
+          nullable: true
+          type: string
+    Organization:
+      title: Organization
+      description: 'An organized group of people with a particular purpose, such as a business, government agency, non-profit, etc.'
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        name:
+          description: The name of the orgnization.
+          type: string
+          example: Sci-Code AS
+        organizationNumber:
+          title: extra info
+          description: 'The number given, proving that the organization exists.'
+          type: string
+          example: Sci-Code AS
+        visionStatement:
+          description: 'A short, descriptive text of what future the organization aims to bring about.'
+          type: string
+          example: 'Sci-Code, as a company, is actively developing services, tools and technologies that contributes towards closing the gap between industry and education. The motivation and value upon which the Company has been built is usefulness. The key of any country’s societal development is based on Education. It is how a generation of people pass its knowledge, know-how and values to the next one. This is why we''re building a new educational system, pillared on the advances in technology that will enable exploratory learning, personalized learning experiences tailored to each individual, and the most  stimulating education in the world; verified by our algorithms. This system will serve as an alternative to the current education system, allowing for a seamless and gradual, piece-by-piece transition. And through building this new system, we allow for the change of our current societal dogma of school and learning being perceived as necessarily boring and hard, into school and learning being AWESOME.'
+        type:
+          $ref: '#/components/schemas/OrganizationType'
+        organizationBranding:
+          $ref: '#/components/schemas/OrganizationBranding'
+      required:
+        - id
+        - name
+        - type
+    Challenge:
+      title: Challenge
+      description: Basically a set of exercises combined for the purpose of testing skills.
+      type: object
+      properties:
+        id:
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/id'
+        object:
+          title: value is "challenge"
+          allOf:
+            - $ref: '#/components/schemas/object'
+            - pattern: ^challenge$
+            - example: challenge
+            - readOnly: true
+        created:
+          allOf:
+            - $ref: '#/components/schemas/timestamp'
+            - readOnly: true
+        title:
+          description: A short text describing the challenge.
+          type: string
+          example: Build your first Form Component
+        tagline:
+          description: 'A short add-on text, adding more details to the title.'
+          type: string
+          example: Show your skills in React by building a simple form component
+        description:
+          description: A in-depth text describing the challenge.
+          type: array
+          items:
+            title: Challenge Description Section
+            type: object
+            properties:
+              headline:
+                description: The headline of the section.
+                type: string
+              bodycopy:
+                description: Approximately a paragraph of text describing the section.
+                type: string
+              label:
+                description: A piece of text describing the section.
+                type: string
+              featuredBlob:
+                description: A featured image or similar for the section.
+                allOf:
+                  - $ref: '#/components/schemas/url'
+        tags:
+          description: A set of keywords related to the challenge.
+          type: array
+          items:
+            type: string
+          example:
+            - react.js
+            - redux.js
+        promoImage:
+          description: A visual description of the challenge.
+          type: string
+        promoVideo:
+          description: In-depth stimulating descrpitionof the challenge.
+          type: string
+        availabilityRanges:
+          description: The durations where people will be able to take the challenge.
+          type: array
+          items:
+            type: object
+            properties:
+              open_time:
+                description: Date and Time when the challenge opens. Measured in seconds since the Unix epoch.
+                allOf:
+                  - $ref: '#/components/schemas/timestamp'
+              close_time:
+                description: Date and Time at which the challenge closes. Measured in seconds since the Unix epoch.
+                allOf:
+                  - $ref: '#/components/schemas/timestamp'
+        difficulty:
+          description: The difficulty level of the challenge.
+          enum:
+            - beginner
+            - intermediate
+            - advanced
+          type: string
+        langauges:
+          description: The supported languages for this challenge.
+          type: array
+          items:
+            $ref: '#/components/schemas/language'
+        exercises:
+          description: The exercises making up the challenge.
+          type: array
+          items:
+            $ref: '#/components/schemas/Exercise'
+          nullable: true
+        organizers:
+          description: The organization(s) hosting the challenge
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+          nullable: true
+        published:
+          description: 'If the challenge is published, it''ll be listed in the public challenge catalog.'
+          type: boolean
+          default: true
+          example: true
+      required:
+        - id
+        - created
+        - object
