@@ -1,4 +1,12 @@
 import * as {{camelCase operation_name}} from '../services/{{operation_name}}.js';
+import jsonfile from 'jsonfile';
+import path, {dirname} from 'path';
+import { fileURLToPath } from 'url';
+
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+let schemas = jsonfile.readFileSync(path.resolve(__dirname, '../schema/schemas.json'));
 
 export default async function (fastify, opts) {
 {{#each headOperation}}
@@ -54,7 +62,7 @@ export default async function (fastify, opts) {
                 * {{{this}}}
             {{/each}}
             */
-
+            let schema{{createName @key ../subresource}} = schemas['{{colonReplacer ../path_name}}']['{{@key}}'];
             fastify.{{@key}}('{{../subresource}}', schema{{createName @key ../subresource}}, async (req, reply) => {
             const options = {
             {{#if this.requestBody}}
