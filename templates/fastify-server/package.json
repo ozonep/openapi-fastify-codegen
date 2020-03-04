@@ -12,6 +12,7 @@
     "fastify-cors": "^3.0.1",
     "fastify-formbody": "^3.1.0",
     "fastify-multipart": "^1.0.4",
-    "jsonfile": "^6.0.0"
+    "jsonfile": "^6.0.0",
+    "ajv-oai": "^1.2.0"
   }
 }
