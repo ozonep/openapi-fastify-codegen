@@ -2,7 +2,7 @@
   "name": "openapi-fastify-codegen",
   "main": "./lib/codegen.js",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "license": "MIT",
   "description": "An OpenAPI v3 code generator for Node.js with Fastify framework",
   "bin": {

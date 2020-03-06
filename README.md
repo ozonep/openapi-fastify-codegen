@@ -5,8 +5,9 @@
 
 <br>
 
-## Motivation Behind The Project
-
+<details>
+<summary>Motivation behind this project</summary>
+<p>
 There are many good code generators on npm, however, I couldn't find one that really suits my needs.
 
 Here's why:
@@ -18,11 +19,12 @@ Here's why:
 * Ready for Docker
 * Not abandoned
 
-
 So this project was born.
+</p>
+</details>
 
-<br>
-Generated code features:
+
+## Generated code features:
 
 * One-time operation, after generation you don't need original YAML file 
 * Easy to read - generated code looks just like normal server code, no abstractions.
