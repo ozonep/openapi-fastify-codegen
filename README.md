@@ -28,7 +28,7 @@ npm install -g openapi-fastify-codegen
 ### From the command-line interface (CLI)
 
 ```bash
-  Usage: ofc <swaggerFile> [options]
+  Usage: ofc <YamlFile> [options]
 
 
   Options:
