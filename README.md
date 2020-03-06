@@ -15,18 +15,30 @@ The generated code features:
 * Configured for Docker use (includes Dockerfile)
 
 
-## Usage
+## Install
 
-To test it, clone this repo & run:
+To use it from the CLI:
 
 ```bash
-node cli.js <path-to-YAML-spec> -o <output-folder>
+npm install -g openapi-fastify-codegen
+```
+
+## Usage
+
+### From the command-line interface (CLI)
+
+```bash
+  Usage: ofc <swaggerFile> [options]
+
+
+  Options:
+    -o, --output <outputDir>       directory where to put the generated files
 ```
 
 Example:
 
 ```bash
-node cli.js tests/openapi3/patstore-expanded.yaml -o ./generated/petstore 
+ofc patstore-expanded.yaml -o ./petstore 
 ```
 
 ## Example
