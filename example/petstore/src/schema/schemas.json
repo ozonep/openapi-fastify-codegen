@@ -1,0 +1,248 @@
+{
+  "/pets": {
+    "get": {
+      "responses": {
+        "200": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "tag": {
+                "type": "string"
+              },
+              "id": {
+                "type": "integer",
+                "format": "int64",
+                "minimum": -9223372036854776000,
+                "maximum": 9223372036854776000
+              }
+            }
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        },
+        "default": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+      },
+      "querystring": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          }
+        }
+      }
+    },
+    "head": {
+      "responses": {
+        "200": {}
+      },
+      "querystring": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "body": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-04/schema#"
+      },
+      "responses": {
+        "200": {
+          "type": "object",
+          "required": [
+            "id",
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            }
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        },
+        "default": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+      }
+    }
+  },
+  "/pets/{id}": {
+    "get": {
+      "responses": {
+        "200": {
+          "type": "object",
+          "required": [
+            "id",
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            }
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        },
+        "default": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+      },
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": -9223372036854776000,
+            "maximum": 9223372036854776000
+          }
+        }
+      }
+    },
+    "delete": {
+      "responses": {
+        "204": {},
+        "default": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+      },
+      "params": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": -9223372036854776000,
+            "maximum": 9223372036854776000
+          }
+        }
+      }
+    }
+  }
+}

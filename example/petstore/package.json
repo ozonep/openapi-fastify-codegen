@@ -1,0 +1,18 @@
+{
+  "name": "swagger-petstore",
+  "description": "A sample API that uses a petstore as an example to demonstrate features in the OpenAPI 3.0 specification",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "fastify": "^2.12.0",
+    "fastify-cors": "^3.0.1",
+    "fastify-formbody": "^3.1.0",
+    "fastify-multipart": "^1.0.4",
+    "jsonfile": "^6.0.0",
+    "ajv-oai": "^1.2.0"
+  }
+}
