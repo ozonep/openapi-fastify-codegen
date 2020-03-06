@@ -15,9 +15,9 @@ const ajv = new Ajv({
 
 fastify.setSchemaCompiler(schema => ajv.compile(schema));
 
-
+const options = { addToBody: true };
 fastify.register(fastifyFormbody);
-fastify.register(fastifyMultipart);
+fastify.register(fastifyMultipart, options);
 fastify.register(fastifyCors, {});
 
 {{#each @root.swagger.endpoints}}
