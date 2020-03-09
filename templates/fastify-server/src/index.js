@@ -3,6 +3,9 @@ import fastifyFormbody from 'fastify-formbody';
 import fastifyMultipart from 'fastify-multipart';
 import fastifyCors from 'fastify-cors';
 import Ajv from "ajv-oai";
+{{#if @root.swagger.components.securitySchemes}}
+import fastifyAuth from 'fastify-auth0-verify';
+{{/if}}
 
 const fastify = Fastify();
 
@@ -19,6 +22,12 @@ const options = { addToBody: true };
 fastify.register(fastifyFormbody);
 fastify.register(fastifyMultipart, options);
 fastify.register(fastifyCors, {});
+{{#if @root.swagger.components.securitySchemes}}
+fastify.register(fastifyAuth, {
+    domain:  process.env.AUTH_DOMAIN,
+    audience:  process.env.AUTH_SECRET,
+});
+{{/if}}
 
 {{#each @root.swagger.endpoints}}
     {{#endsWith @root.swagger.basePath '/'}}
