@@ -1,6 +1,36 @@
-.DS_Store
-.idea
 node_modules
-npm-debug.log
+
+# Logging/debugging
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment variables file
+.env
+.env.test
+
+# Next.js build output
+.next
+
+# MacOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# VSCode specific
+.vscode
+*.code-workspace
+
+# JetBrains specific
+*.iml
+.idea
+
 tests/generated*
 examples
