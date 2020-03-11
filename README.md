@@ -4,7 +4,8 @@
 </p>
 
 <br>
-[![npm](https://img.shields.io/npm/v/openapi-fastify-codegen.svg)](https://www.npmjs.com/package/openapi-fastify-codegen)
+![npm](https://img.shields.io/npm/v/openapi-fastify-codegen?style=for-the-badge)
+[![npm](https://img.shields.io/npm/v/openapi-fastify-codegen)](https://www.npmjs.com/package/openapi-fastify-codegen)
 <br>
 
 <details>
