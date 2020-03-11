@@ -2,11 +2,10 @@
 <p align="center">
     Use your OpenAPI 3 YAML spec to generate Node.js + Fastify code for your API!
 </p>
+<br/>
 
-<br>
-![npm](https://img.shields.io/npm/v/openapi-fastify-codegen?style=for-the-badge)
-[![npm](https://img.shields.io/npm/v/openapi-fastify-codegen)](https://www.npmjs.com/package/openapi-fastify-codegen)
-<br>
+[![npm](https://img.shields.io/npm/v/openapi-fastify-codegen?style=for-the-badge)](https://www.npmjs.com/package/openapi-fastify-codegen)
+<br/>
 
 <details>
 <summary>Motivation behind this project</summary>
